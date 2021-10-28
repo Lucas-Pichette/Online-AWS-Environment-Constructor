@@ -1,4 +1,4 @@
-# Online-AWS-Environment-Constructor
+# Online AWS Environment Constructor
 
 ## Purpose
 There is currently a drought of tools for people to use that allow them to get a customized list of AWS resources for any project they wish to carry out. With cloud computing removing immense capital expenditures for variable expenses, more people and organizations are able to transform their ideas into a reality. AWS is the leading provider for cloud resources, providing over 167 AWS cloud resources, and continuing to develop new cloud resources. Knowing how to use the available cloud computing resources is complex and time consuming, and typically Solutions Architects are paid a hefty sum to provide a customized AWS environment for a project’s needs. However, the Online AWS Environment Constructor aims to provide a tool that describes the AWS resources needed for a particular project without having to spend any money.
