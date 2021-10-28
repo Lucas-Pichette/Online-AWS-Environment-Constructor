@@ -86,7 +86,7 @@ The following JSON stores all of the solutions we can offer our users depending 
 					}
 				},
 				{
-					"name": "CloudFront
+					"name": "CloudFront"
 					"estimatedCost": {
 						[
 							{
