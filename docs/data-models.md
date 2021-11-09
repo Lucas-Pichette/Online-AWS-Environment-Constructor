@@ -22,6 +22,29 @@ The following JSON stores all of the solutions we can offer our users depending 
 {
 	"solutions": [
 		{
+			"requiredQuestionAnswers": [
+				{
+					"id": "1.0",
+					"answer": {
+						"type": "range",
+						"value": (0,10000)
+					},
+				},
+				{
+					"id": "1.1",
+					"answer": {
+						"type": "range",
+						"value": (20,500)
+					},
+				},
+				{
+					"id": "2.0",
+					"answer": {
+						"type": "boolean",
+						"value": true
+					}
+				}
+			],
 			"fitsFor": {
 				"type": "website",
 				"users": {
