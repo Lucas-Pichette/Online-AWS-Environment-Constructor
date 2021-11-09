@@ -134,3 +134,42 @@ With the answers from the survey, we can determine which solution is the best-fi
 - Second
 - Query
 - Thousand (requests/queries)
+
+#### Questions DM
+
+The following JSON stores all of the questions we can offer our users during the survey, including dynamically-rendered questions.
+
+```JSON
+[
+    {
+        "id": "1.0",
+        "question": {
+            "content": "foo",
+            "type": "range",
+            "answerOptions": [
+                [0,25],
+                [25,500],
+                [500,10000]
+            ]
+        },
+        "childrenQuestions": [
+            {
+                "id": "1.1",
+                "question": {
+                    "content": "foo",
+                    "type": "boolean",
+                    "answerOptions": [
+                        true,
+                        false
+                    ],
+                    "answerToQuestion": [
+                        "1.2",
+                        "4.0"
+                    ]
+                },
+                "childrenQuestions": []
+            }
+        ]
+    }
+]
+```
