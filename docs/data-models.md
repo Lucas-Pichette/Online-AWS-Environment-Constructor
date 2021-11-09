@@ -27,14 +27,14 @@ The following JSON stores all of the solutions we can offer our users depending 
 					"id": "1.0",
 					"answer": {
 						"type": "range",
-						"value": (0,10000)
+						"value": [0,10000]
 					},
 				},
 				{
 					"id": "1.1",
 					"answer": {
 						"type": "range",
-						"value": (20,500)
+						"value": [20,500]
 					},
 				},
 				{
