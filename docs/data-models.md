@@ -20,7 +20,7 @@ The following JSON stores all of the solutions we can offer our users depending 
 
 ```JSON
 {
-	"solutions": [
+	[
 		{
 			"requiredQuestionAnswers": [
 				{
