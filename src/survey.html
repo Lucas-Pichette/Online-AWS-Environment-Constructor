@@ -4,7 +4,7 @@
 <head>
 
     <!-- Change title to your website title -->
-    <title>!TODO</title>
+    <title>AWS Environment Constructor</title>
 
     <!-- Leave these as they are -->
     <meta charset="utf-8">
@@ -46,94 +46,135 @@
 </head>
 <script>
     var index = 0;
+    var answerSelected = 1;
+    var firstItrFlag = 0;
+    /* Don't sort, directly, in any way. */
+    /* If desired, create a replica and assign each question JSON a new 
+    key "id" with its current index, then you can feel free to reorder *that* 
+    questions JSON array as you please. */
+    const questions = [{
+        name: "Does your solution need to, or is willing to, reach users from a web-based interface?",
+        type: "boolean",
+        userAnswer: null,
+    }, {
+        name: "Does your solution need to, or want to be able to, support users at a global scale?",
+        type: "boolean",
+        userAnswer: null,
+    }, {
+        name: "How many requests per week do you expect your solution to need to support?",
+        type: "decimal",
+        userAnswer: null,
+    }, {
+        name: "Does the developer of the product/tool have some understanding of serverless architecture, and/or is familiar with AWS at a Cloud Practitioner level?",
+        type: "boolean",
+        userAnswer: null,
+    }, ]
+
 
     function generateQuestion() {
-        var data = {
-            questions: [{
-                "id": "1",
-                "question": "Select one of the following:",
-                "op1": "This is the first option!",
-                "op2": "This is the second option.",
-                "op3": "This is the third option!",
-                "op4": "This is the fourth option."
-            }, {
-                "id": "2",
-                "question": "what is your favorite color?",
-                "op1": "Red",
-                "op2": "Blue",
-                "op3": "Green",
-                "op4": "Purple"
-            }, {
-                "id": "3",
-                "question": "what is your favorite food?",
-                "op1": "Sushi",
-                "op2": "Burrito",
-                "op3": "Pizza",
-                "op4": "Pasta"
-            }, {
-                "id": "4",
-                "question": "where do you live?",
-                "op1": "Oregon",
-                "op2": "Washington",
-                "op3": "California",
-                "op4": "Other"
-            }, {
-                "id": "5",
-                "question": "How old are you?",
-                "op1": "<10 years old",
-                "op2": "10-15 years old",
-                "op3": "16-20 years old",
-                "op4": "21-25 years old"
-            }]
+
+
+        //This logic makes it so they can not skip questions 
+        //TODO: fix this jank
+        if (firstItrFlag == 0 && answerSelected != 0) {
+            firstItrFlag = 1;
+
+        } else {
+            if (answerSelected == 1) {
+                index++
+            }
+
         }
+        answerSelected = 0;
 
-        if (document.getElementById("gen")) {
-            document.getElementById("gen").remove()
+
+        if (index < Object.keys(questions).length) {
+
+            if (document.getElementById("gen")) {
+                document.getElementById("gen").remove()
+            }
+            switch (questions[index].type) {
+                case "boolean":
+                    var card = document.createElement('div');
+                    card.setAttribute("id", "gen");
+                    card.innerHTML =
+                        '<h2>' + questions[index].name + '</h2>' +
+                        '<div class="booleanDiv">' +
+                        '<div id = "1" class="aDiv" onClick="handleBoolean(index, true)">' +
+                        '<p class = "aText">' + 'Yes' + '</p>' +
+                        '</div>' +
+                        '<div id = "2" class="aDiv" onClick="handleBoolean(index, false)">' +
+                        '<p class = "aText">' + 'No' + '</p>' +
+                        '</div>' +
+                        '</div>'
+                    '<BR>';
+                    document.getElementById("cardzone").appendChild(card)
+                    break;
+
+                case "decimal":
+                    var card = document.createElement('div');
+                    card.setAttribute("id", "gen");
+                    card.innerHTML =
+                        '<h2>' + questions[index].name + '</h2>' +
+                        '<div class="decimalDiv" id = "1" >' +
+                        '<input class="decimalInput" type="number" id="decimalInput" >' +
+                        '</div>' +
+                        '<BR>';
+                    document.getElementById("cardzone").appendChild(card)
+                    decimalInput.addEventListener("input", function(e) {
+                        questions[index].userAnswer = this.value;
+
+                        answerSelected = 1;
+
+                    });
+                    document.getElementById("decimalInput").focus();
+
+                    break;
+            }
         }
-        console.log(index);
-        var card = document.createElement('div');
-        card.setAttribute("id", "gen");
-        card.innerHTML =
-            '<h2>' + data.questions[index].question + '</h2>' +
-
-            '<input type="radio">' + data.questions[index].op1 +
-            '<BR>' +
-            '<input type="radio">' + data.questions[index].op2 +
-            '<BR>' +
-            '<input type="radio">' + data.questions[index].op3 +
-            '<BR>' +
-            '<input type="radio">' + data.questions[index].op4 +
-            '<BR>' + '<BR>';
-        document.getElementById("cardzone").appendChild(card)
-
-        if (index == 4) {
-            console.log("inside if");
+        if ((Object.keys(questions).length - index) == 1) {
             document.getElementById("formbtn").setAttribute('value', 'View Results');
             document.getElementById("formbtn").setAttribute('action', './recomendations.html');
         }
 
-        index++;
+    }
+
+    function handleBoolean(index, answer) {
+        answerSelected = 1;
+        questions[index].userAnswer = answer;
+        sessionStorage.setItem(0, JSON.stringify(questions))
+
+        console.log(questions)
+
+        if (answer == true) {
+            if (document.getElementById("2").classList != null) {
+                document.getElementById("2").classList.remove("aSelected")
+            }
+            document.getElementById("1").classList.add("aSelected")
+        } else if (answer == false) {
+            if (document.getElementById("1").classList != null) {
+                document.getElementById("1").classList.remove("aSelected")
+            }
+            document.getElementById("2").classList.add("aSelected")
+        }
     }
 </script>
 
 <body onload="generateQuestion()" class="body" style="margin: 0;">
-
-    <h1 class="text-white ">Survey</h1>
-
+    <div class="surveyTitle">
+        <h1 class="text-white surveyTitle">Survey
+        </h1>
+    </div>
     <div class="divflex">
-        <div id="cardzone" class="card container">
+        <div id="cardzone" class="card container cardzone">
 
         </div>
-
         <div>
             <form action="javascript:generateQuestion()" id="formbtn">
-                <input type="submit" value="Submit" />
+                <input class="submit-button" type="submit" value="Submit" />
             </form>
-
         </div>
-
     </div>
-
 </body>
 
 </html>

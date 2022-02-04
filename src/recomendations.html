@@ -4,7 +4,7 @@
 <head>
 
     <!-- Change title to your website title -->
-    <title>!TODO</title>
+    <title>AWS Environment Constructor</title>
 
     <!-- Leave these as they are -->
     <meta charset="utf-8">
@@ -19,7 +19,6 @@
 
     <!-- This tells the search engines whether to follow all of the links on your site. If you only want them to track your homepage, replace content="all,follow" with content="index,follow" -->
     <meta name="robots" content="all, follow" />
-
 
     <!-- These are the little icons that show up next to the title of the URL in the browser tab. For these to work, you must include a favicon.png file in the root of your website directory. This can also be favicon.jpg if you prefer, you just need to change the link in the href to favicon.jpg for it to work -->
     <link rel="shortcut icon" href="favicon.png">
@@ -45,17 +44,163 @@
 
 </head>
 
-
 <script>
+    window.onload = function() {
+        //Assume all prices to be in USD 
+        /* 
+         * Prices can change depending upon origin of hardware; 
+         * e.g. if you have your environment in Canada vs United States, 
+         * it may cost a different amount. 
+         */
+        const solutions = [{
+            name: "Serverless Website",
+            /* If even one of these isn't met, don't display the solution */
+            /* Expected answers won't include an answer for each question. Not 
+            every question will be relevant to every solution. */
+            expected_answers: [{
+                /* The index of the question in the questions array */
+                question: 1,
+                type: "boolean",
+                answer: true
+            }, {
+                /* The index of the question in the questions array */
+                question: 2,
+                type: "boolean",
+                answer: true
+            }, {
+                /* The index of the question in the questions array */
+                question: 3,
+                type: "range",
+                answer: [0, 151200000000]
+            }, {
+                /* The index of the question in the questions array */
+                question: 4,
+                type: "boolean",
+                answer: true
+            }, ],
+            resources: [{
+                name: "Route53",
+                /* generic resource description */
+                description: "Domain Name Service (DNS)",
+                /* why this resource exists in the environment/solution */
+                justification: "Allows your users to enter a domain name and be redirected to your website",
+                /* costs are quite complex with AWS, I've removed non-related costs */
+                costs: [{
+                    name: "Hosted Zone",
+                    type: "integer",
+                    cost: 0.5,
+                }, {
+                    name: "Per-Query",
+                    type: "decimal",
+                    cost: 0.0000004,
+                }, ],
+            }, {
+                name: "Simple Storage Service (S3)",
+                /* generic resource description */
+                description: "Scalable object storage",
+                /* why this resource exists in the environment/solution */
+                justification: "Static file hosting; dynamic backends can be added to this environment if desired",
+                /* costs are quite complex with AWS, I've removed non-related costs */
+                costs: [{
+                    name: "Storage (GB)",
+                    type: "decimal",
+                    cost: 0.023,
+                }, {
+                    name: "Per PUT Request",
+                    type: "integer",
+                    cost: 0.000005,
+                }, {
+                    name: "Per GET Request",
+                    type: "integer",
+                    cost: 0.0000004,
+                }, ],
+            }, {
+                name: "CloudFront",
+                /* generic resource description */
+                description: "Content Distribution Network (CDN)",
+                /* why this resource exists in the environment/solution */
+                justification: "HTTPS (Secure) web-based connection to website resources, data caching for hosting origin (S3) relief, and data caching for faster retrieval times.",
+                /* costs are quite complex with AWS, I've removed non-related costs */
+                costs: [{
+                    name: "Data Transfer: To Internet (GB)",
+                    type: "decimal",
+                    cost: 0.085,
+                }, {
+                    name: "Data Transfer: To Origin (GB)",
+                    type: "decimal",
+                    cost: 0.02,
+                }, ],
+            }, {
+                name: "Certificate Manager",
+                /* generic resource description */
+                description: "Manages TLS and SSL certificates",
+                /* why this resource exists in the environment/solution */
+                justification: "Required for HTTPS-based connections.",
+                /* costs are quite complex with AWS, I've removed non-related costs */
+                // No costs associated to this service
+                costs: null
+            }, ],
+        }]
+
+        var questions = JSON.parse(sessionStorage.getItem(0));
+        console.log(questions)
+        console.log(solutions)
+
+        var checkAnswers = 0;
+
+        if (questions[0].userAnswer == solutions[0].expected_answers[0].answer) {
+            console.log("1")
+            checkAnswers++
+        }
+        if (questions[1].userAnswer == solutions[0].expected_answers[1].answer) {
+            console.log("2")
+            checkAnswers++
+        }
+        if (solutions[0].expected_answers[2].answer[0] < questions[2].userAnswer < solutions[0].expected_answers[2].answer[1]) {
+            console.log("3")
+            checkAnswers++
+        }
+        if (questions[3].userAnswer == solutions[0].expected_answers[3].answer) {
+            console.log("4")
+            checkAnswers++
+        }
+        if (checkAnswers == 4) {
+            console.log("4")
+                //  document.getElementById('output').innerHTML = JSON.stringify(questions);
+
+            var card = document.createElement('div');
+
+            card.innerHTML =
+                '<h2>' + solutions[0].name + '</h2>'
+            document.getElementById("cardzone").appendChild(card)
+
+            for (i = 0; i < Object.keys(solutions[0].resources).length; i++) {
+                var resources = document.createElement('div');
+
+                resources.innerHTML =
+                    '<h2>' + '' + solutions[0].resources[i].name + '</h2>' +
+                    '<p>' + 'Description: ' + solutions[0].resources[i].description + '</p>' +
+                    '<p>' + 'Justification: ' + solutions[0].resources[i].justification + '</p>'
+                document.getElementById("cardzone").appendChild(resources)
+
+
+            }
+
+
+        } else {
+            console.log("not 4")
+            document.getElementById('output').innerHTML = "No Solutions Found"
+        }
+    };
 </script>
 
 <body class="body" style="margin: 0;">
 
-    <h1 class="text-white">Recomendations</h1>
+    <h1 class="text-white surveyTitle">Recomendations</h1>
 
     <div class="divflex">
         <div id="cardzone" class="card container centeredtext">
-            <h2>This is where the recomendations will live one day.</h2>
+            <h2 id="output"> </h2>
             <a href="./index.html">Return Home</a>
         </div>
     </div>
