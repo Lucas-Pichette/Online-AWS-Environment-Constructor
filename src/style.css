@@ -148,6 +148,21 @@
     height: 100px;
 }
 
+.solutionTitle {
+    display: flex;
+    justify-content: center;
+    height: 60px;
+    margin-bottom: 40px;
+}
+
+.resourcePadding {
+    margin-left: 20px;
+}
+
+.costsPadding {
+    margin-left: 40px;
+}
+
 .cardzone {}
 
 .card {
@@ -302,6 +317,15 @@ h3 {
     font-family: Arial, Helvetica, sans-serif;
 }
 
+li {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+}
+
+ul {
+    list-style-position: outside;
+}
+
 .aSelected {
     border-style: solid;
     border-color: #f7f7f8;
@@ -313,4 +337,10 @@ h3 {
     height: 200px;
     width: 800px;
     border-radius: 20px;
+}
+
+.resourceTitle {
+    border-bottom: 2px solid #f7f7f8;
+    width: max-content;
+    text-decoration: none;
 }

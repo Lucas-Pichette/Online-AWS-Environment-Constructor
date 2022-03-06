@@ -52,6 +52,9 @@
          * e.g. if you have your environment in Canada vs United States, 
          * it may cost a different amount. 
          */
+        var questions = JSON.parse(sessionStorage.getItem(0));
+        console.log("qs", questions)
+
         const solutions = [{
             name: "Serverless Website",
             /* If even one of these isn't met, don't display the solution */
@@ -70,11 +73,6 @@
             }, {
                 /* The index of the question in the questions array */
                 question: 3,
-                type: "range",
-                answer: [0, 151200000000]
-            }, {
-                /* The index of the question in the questions array */
-                question: 4,
                 type: "boolean",
                 answer: true
             }, ],
@@ -82,12 +80,19 @@
                 name: "Route53",
                 /* generic resource description */
                 description: "Domain Name Service (DNS)",
+                dependencies: [{
+                    dependency: [{
+                        resource: "Simple Storage Service (S3)"
+                    }, {
+                        reason: "While S3 itself is not a requirement, a static hosting origin (such as S3) is. To prevent friction and headache from trying to link resources from different providers, we would encourage the use of S3, as AWS allows for a convenient 'alias' record creation. You can just click on the name of the S3 bucket when creating an A record for it in Route53, for example!"
+                    }, ]
+                }],
                 /* why this resource exists in the environment/solution */
                 justification: "Allows your users to enter a domain name and be redirected to your website",
                 /* costs are quite complex with AWS, I've removed non-related costs */
                 costs: [{
                     name: "Hosted Zone",
-                    type: "integer",
+                    type: "decimal",
                     cost: 0.5,
                 }, {
                     name: "Per-Query",
@@ -98,6 +103,7 @@
                 name: "Simple Storage Service (S3)",
                 /* generic resource description */
                 description: "Scalable object storage",
+                dependencies: undefined,
                 /* why this resource exists in the environment/solution */
                 justification: "Static file hosting; dynamic backends can be added to this environment if desired",
                 /* costs are quite complex with AWS, I've removed non-related costs */
@@ -107,17 +113,24 @@
                     cost: 0.023,
                 }, {
                     name: "Per PUT Request",
-                    type: "integer",
+                    type: "decimal",
                     cost: 0.000005,
                 }, {
                     name: "Per GET Request",
-                    type: "integer",
+                    type: "decimal",
                     cost: 0.0000004,
                 }, ],
             }, {
                 name: "CloudFront",
                 /* generic resource description */
                 description: "Content Distribution Network (CDN)",
+                dependencies: [{
+                    dependency: [{
+                        resource: "Certificate Manager"
+                    }, {
+                        reason: "CloudFront requries a TLS/SSL certificate in order to be created, as it transmits data via HTTPS."
+                    }, ]
+                }],
                 /* why this resource exists in the environment/solution */
                 justification: "HTTPS (Secure) web-based connection to website resources, data caching for hosting origin (S3) relief, and data caching for faster retrieval times.",
                 /* costs are quite complex with AWS, I've removed non-related costs */
@@ -134,61 +147,231 @@
                 name: "Certificate Manager",
                 /* generic resource description */
                 description: "Manages TLS and SSL certificates",
+                dependencies: [{
+                    dependency: [{
+                        resource: "Route53"
+                    }, {
+                        reason: "While you may be able to use a DNS from another provider, the difficulty of such with integration to Certificate Manager is unknown. It's encouraged to use Rotue53 as your DNS for ease-of-use when using Certificate Manager."
+                    }, ]
+                }],
                 /* why this resource exists in the environment/solution */
                 justification: "Required for HTTPS-based connections.",
                 /* costs are quite complex with AWS, I've removed non-related costs */
                 // No costs associated to this service
                 costs: null
             }, ],
+        }, {
+            name: "Standalone API",
+            /* If even one of these isn't met, don't display the solution */
+            /* Expected answers won't include an answer for each question. Not 
+            every question will be relevant to every solution. */
+            expected_answers: [{
+                /* The index of the question in the questions array */
+                question: 1,
+                type: "boolean",
+                answer: true
+            }, {
+                /* The index of the question in the questions array */
+                question: 2,
+                type: "boolean",
+                answer: false
+            }, {
+                /* The index of the question in the questions array */
+                question: 3,
+                type: "boolean",
+                answer: false
+            }, {
+                /* The index of the question in the questions array */
+                question: 4,
+                type: "boolean",
+                answer: true
+            }, ],
+            resources: [{
+                name: "Route53",
+                /* generic resource description */
+                description: "Domain Name Service (DNS)",
+                dependencies: [{
+                    dependency: [{
+                        resource: "Elastic Compute Cloud (EC2)"
+                    }, {
+                        reason: "While EC2 itself is not a requirement, a server hosting origin (such as EC2) is. To prevent friction and headache from trying to link resources from different providers, we would encourage the use of EC2, as AWS allows for a convenient 'alias' record creation. You can just click on the name of the EC2 instance when creating an A record for it in Route53, for example!"
+                    }, ]
+                }],
+                /* why this resource exists in the environment/solution */
+                justification: "Allows your users to enter a domain name and be redirected to your website; Not required if connecting to 'public ipv4' is acceptable.",
+                /* costs are quite complex with AWS, I've removed non-related costs */
+                costs: [{
+                    /* Allows for different views of pricing based on single vs many options */
+                    type: "single",
+                    options: [{
+                        1: [
+                            /* Note the lack of option_name, costs, and nested array to costs */
+                            /* We can predict this lack of data by referring to the type attribute */
+                            {
+                                name: "Hosted Zone",
+                                type: "decimal",
+                                cost: 0.5,
+                            }, {
+                                name: "Per-Query",
+                                type: "decimal",
+                                cost: 0.0000004,
+                            },
+                        ],
+                    }, ],
+                }, ],
+            }, {
+                name: "Elastic Compute Cloud (EC2)",
+                /* generic resource description */
+                description: "Cloud-based Compute Service (Virtual Machine in the Cloud)",
+                dependencies: undefined,
+                /* why this resource exists in the environment/solution */
+                justification: "The hosting origin for your API, and where all of your development will occur",
+                /* costs are quite complex with AWS, I've removed non-related costs */
+                costs: [{
+                    /* Allows for different views of pricing based on single vs many options */
+                    type: "many",
+                    options: [{
+                        1: [
+                            /* Note the presence of option_name, costs, and nested array to costs */
+                            /* We can predict this increase of data by referring to the type attribute */
+                            {
+                                option_name: "t2_micro",
+                                /* Note the presence of option_meta_data */
+                                /* We can predict if this extra data will be here by the type attribute used previously */
+                                option_meta_data: {
+                                    cost_options: true,
+                                },
+                                details: {
+                                    free_tier_eligble: true,
+                                    vCPUs: 1,
+                                    RAM: 1,
+                                    Network_Performance: "Low to Moderate",
+                                    more_details: undefined,
+                                },
+                                costs: [
+                                    /* Note the presence of a new nested json, with an attribute hourly_payment_options */
+                                    /* We can predict if this extra data will be here with the option_meta_data attribute, 
+                                    and it's cost_options attribute. */
+                                    {
+                                        name: hourly_payment_options,
+                                        options: [{
+                                            name: "On-Demand Per-Hour",
+                                            type: "decimal",
+                                            cost: 0.0116,
+                                        }, {
+                                            name: "1-yr Reserved Instance (effective hourly)",
+                                            type: "decimal",
+                                            cost: 0.007,
+                                        }, {
+                                            name: "3-yr Reserved Instance (effective hourly)",
+                                            type: "decimal",
+                                            cost: 0.005,
+                                        }, ]
+                                    }
+                                ],
+                            }, {
+                                option_name: "m6i_large",
+                                /* Note the presence of option_meta_data */
+                                /* We can predict if this extra data will be here by the type attribute used previously */
+                                option_meta_data: {
+                                    cost_options: false,
+                                },
+                                details: {
+                                    free_tier_eligble: false,
+                                    vCPUs: 2,
+                                    RAM: 8,
+                                    Network_Performance: undefined,
+                                    more_details: [{
+                                        detail: {
+                                            name: Network_Bandwidth,
+                                            amount: 12.5,
+                                        },
+                                        detail: {
+                                            name: EBS_Bandwidth,
+                                            amount: 10,
+                                        },
+                                    }, ],
+                                },
+                                costs: [{
+                                    name: "On-Demand Per-Hour",
+                                    type: "decimal",
+                                    cost: 0.096,
+                                }, ],
+                            }
+                        ],
+                    }, ],
+                }, ],
+            }, ],
         }]
 
-        var questions = JSON.parse(sessionStorage.getItem(0));
-        console.log(questions)
-        console.log(solutions)
+        var checkAnswers = -1;
+        //check if first solution
+        if ((questions[0].userAnswer == true) && (questions[1].userAnswer == true) && (questions[2].userAnswer == true)) {
+            console.log("ans1", 0)
+            checkAnswers = 0
+        }
 
-        var checkAnswers = 0;
+        //check if second solution
+        if ((questions[0].userAnswer == true) && (questions[1].userAnswer == false) && (questions[2].userAnswer == false) && (questions[3].userAnswer == true)) {
+            console.log(1)
+            checkAnswers = 1
+        }
 
-        if (questions[0].userAnswer == solutions[0].expected_answers[0].answer) {
-            console.log("1")
-            checkAnswers++
-        }
-        if (questions[1].userAnswer == solutions[0].expected_answers[1].answer) {
-            console.log("2")
-            checkAnswers++
-        }
-        if (solutions[0].expected_answers[2].answer[0] < questions[2].userAnswer < solutions[0].expected_answers[2].answer[1]) {
-            console.log("3")
-            checkAnswers++
-        }
-        if (questions[3].userAnswer == solutions[0].expected_answers[3].answer) {
-            console.log("4")
-            checkAnswers++
-        }
-        if (checkAnswers == 4) {
-            console.log("4")
-                //  document.getElementById('output').innerHTML = JSON.stringify(questions);
+        //if a solution was found
+        if (checkAnswers != -1) {
 
             var card = document.createElement('div');
-
             card.innerHTML =
-                '<h2>' + solutions[0].name + '</h2>'
+                '<div class="solutionTitle">' +
+                '<h2 style="font-size:38px;">' + solutions[checkAnswers].name + '</h2>' +
+                '</div>'
+
             document.getElementById("cardzone").appendChild(card)
 
-            for (i = 0; i < Object.keys(solutions[0].resources).length; i++) {
+            for (i = 0; i < Object.keys(solutions[checkAnswers].resources).length; i++) {
                 var resources = document.createElement('div');
-
                 resources.innerHTML =
-                    '<h2>' + '' + solutions[0].resources[i].name + '</h2>' +
-                    '<p>' + 'Description: ' + solutions[0].resources[i].description + '</p>' +
-                    '<p>' + 'Justification: ' + solutions[0].resources[i].justification + '</p>'
+                    '<h2 class ="resourceTitle">' + '' + solutions[checkAnswers].resources[i].name + '</h2>' +
+                    '<div >' +
+                    '<ul>' +
+                    '<li class="text-white">' + 'Description: ' + solutions[checkAnswers].resources[i].description + '</li>' +
+                    '</ul>' +
+                    '<ul>' +
+                    '<li class="text-white">' + 'Justification: ' + solutions[checkAnswers].resources[i].justification + '</li>' +
+                    '</ul>'
+
+                '</div>'
+
                 document.getElementById("cardzone").appendChild(resources)
 
+                if (solutions[checkAnswers].resources[i].costs != null) {
+                    var costTitle = document.createElement('div');
 
+                    costTitle.innerHTML =
+                        '<div>' +
+                        '<ul>' +
+                        '<li class = "text-white">' + 'Cost by type:' + '</li>' +
+                        '</ul>' +
+                        '</div>'
+
+                    document.getElementById("cardzone").appendChild(costTitle)
+
+                    if (solutions[checkAnswers].resources[i].costs)
+                        for (j = 0; j < Object.keys(solutions[checkAnswers].resources[i].costs).length; j++) {
+                            var resourceCosts = document.createElement('div');
+                            resourceCosts.innerHTML =
+                                '<div class="costsPadding">' +
+                                '<ul>' +
+                                '<li class="text-white">' + solutions[checkAnswers].resources[i].costs[j].name + ': $' + solutions[checkAnswers].resources[i].costs[j].cost.toString() + '</li>' +
+                                '</ul>' +
+                                '</div>'
+
+                            document.getElementById("cardzone").appendChild(resourceCosts)
+                        }
+                }
             }
 
-
         } else {
-            console.log("not 4")
             document.getElementById('output').innerHTML = "No Solutions Found"
         }
     };
@@ -199,9 +382,14 @@
     <h1 class="text-white surveyTitle">Recomendations</h1>
 
     <div class="divflex">
-        <div id="cardzone" class="card container centeredtext">
+        <div id="cardzone" class="card container ">
+
+        </div>
+        <div>
+
             <h2 id="output"> </h2>
             <a href="./index.html">Return Home</a>
+
         </div>
     </div>
 

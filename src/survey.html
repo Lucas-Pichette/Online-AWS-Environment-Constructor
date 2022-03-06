@@ -55,26 +55,24 @@
     const questions = [{
         name: "Does your solution need to, or is willing to, reach users from a web-based interface?",
         type: "boolean",
-        userAnswer: null,
+        userAnswer: null
     }, {
         name: "Does your solution need to, or want to be able to, support users at a global scale?",
         type: "boolean",
-        userAnswer: null,
+        userAnswer: null
     }, {
-        name: "How many requests per week do you expect your solution to need to support?",
-        type: "decimal",
-        userAnswer: null,
-    }, {
-        name: "Does the developer of the product/tool have some understanding of serverless architecture, and/or is familiar with AWS at a Cloud Practitioner level?",
+        name: "Is a serverless approach desired?",
         type: "boolean",
-        userAnswer: null,
+        userAnswer: null
+    }, {
+        name: "Do you need something quick and easy (True), or higher quality and worth the extra time and development effort (False)?",
+        type: "boolean",
+        userAnswer: null
     }, ]
 
-
     function generateQuestion() {
-
-
         //This logic makes it so they can not skip questions 
+
         //TODO: fix this jank
         if (firstItrFlag == 0 && answerSelected != 0) {
             firstItrFlag = 1;
@@ -83,10 +81,8 @@
             if (answerSelected == 1) {
                 index++
             }
-
         }
         answerSelected = 0;
-
 
         if (index < Object.keys(questions).length) {
 
@@ -123,12 +119,9 @@
                     document.getElementById("cardzone").appendChild(card)
                     decimalInput.addEventListener("input", function(e) {
                         questions[index].userAnswer = this.value;
-
                         answerSelected = 1;
-
                     });
                     document.getElementById("decimalInput").focus();
-
                     break;
             }
         }
@@ -143,7 +136,6 @@
         answerSelected = 1;
         questions[index].userAnswer = answer;
         sessionStorage.setItem(0, JSON.stringify(questions))
-
         console.log(questions)
 
         if (answer == true) {
