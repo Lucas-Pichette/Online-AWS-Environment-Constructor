@@ -93,11 +93,11 @@
                 costs: [{
                     name: "Hosted Zone",
                     type: "decimal",
-                    cost: 0.5,
+                    cost: "0.5",
                 }, {
                     name: "Per-Query",
                     type: "decimal",
-                    cost: 0.0000004,
+                    cost: "0.0000004",
                 }, ],
             }, {
                 name: "Simple Storage Service (S3)",
@@ -110,15 +110,15 @@
                 costs: [{
                     name: "Storage (GB)",
                     type: "decimal",
-                    cost: 0.023,
+                    cost: "0.023",
                 }, {
                     name: "Per PUT Request",
                     type: "decimal",
-                    cost: 0.000005,
+                    cost: "0.000005",
                 }, {
                     name: "Per GET Request",
                     type: "decimal",
-                    cost: 0.0000004,
+                    cost: "0.0000004",
                 }, ],
             }, {
                 name: "CloudFront",
@@ -137,11 +137,11 @@
                 costs: [{
                     name: "Data Transfer: To Internet (GB)",
                     type: "decimal",
-                    cost: 0.085,
+                    cost: "0.085",
                 }, {
                     name: "Data Transfer: To Origin (GB)",
                     type: "decimal",
-                    cost: 0.02,
+                    cost: "0.02",
                 }, ],
             }, {
                 name: "Certificate Manager",
@@ -201,23 +201,13 @@
                 justification: "Allows your users to enter a domain name and be redirected to your website; Not required if connecting to 'public ipv4' is acceptable.",
                 /* costs are quite complex with AWS, I've removed non-related costs */
                 costs: [{
-                    /* Allows for different views of pricing based on single vs many options */
-                    type: "single",
-                    options: [{
-                        1: [
-                            /* Note the lack of option_name, costs, and nested array to costs */
-                            /* We can predict this lack of data by referring to the type attribute */
-                            {
-                                name: "Hosted Zone",
-                                type: "decimal",
-                                cost: 0.5,
-                            }, {
-                                name: "Per-Query",
-                                type: "decimal",
-                                cost: 0.0000004,
-                            },
-                        ],
-                    }, ],
+                    name: "Hosted Zone",
+                    type: "decimal",
+                    cost: 0.5,
+                }, {
+                    name: "Per-Query",
+                    type: "decimal",
+                    cost: 0.0000004,
                 }, ],
             }, {
                 name: "Elastic Compute Cloud (EC2)",
@@ -228,78 +218,9 @@
                 justification: "The hosting origin for your API, and where all of your development will occur",
                 /* costs are quite complex with AWS, I've removed non-related costs */
                 costs: [{
-                    /* Allows for different views of pricing based on single vs many options */
-                    type: "many",
-                    options: [{
-                        1: [
-                            /* Note the presence of option_name, costs, and nested array to costs */
-                            /* We can predict this increase of data by referring to the type attribute */
-                            {
-                                option_name: "t2_micro",
-                                /* Note the presence of option_meta_data */
-                                /* We can predict if this extra data will be here by the type attribute used previously */
-                                option_meta_data: {
-                                    cost_options: true,
-                                },
-                                details: {
-                                    free_tier_eligble: true,
-                                    vCPUs: 1,
-                                    RAM: 1,
-                                    Network_Performance: "Low to Moderate",
-                                    more_details: undefined,
-                                },
-                                costs: [
-                                    /* Note the presence of a new nested json, with an attribute hourly_payment_options */
-                                    /* We can predict if this extra data will be here with the option_meta_data attribute, 
-                                    and it's cost_options attribute. */
-                                    {
-                                        name: hourly_payment_options,
-                                        options: [{
-                                            name: "On-Demand Per-Hour",
-                                            type: "decimal",
-                                            cost: 0.0116,
-                                        }, {
-                                            name: "1-yr Reserved Instance (effective hourly)",
-                                            type: "decimal",
-                                            cost: 0.007,
-                                        }, {
-                                            name: "3-yr Reserved Instance (effective hourly)",
-                                            type: "decimal",
-                                            cost: 0.005,
-                                        }, ]
-                                    }
-                                ],
-                            }, {
-                                option_name: "m6i_large",
-                                /* Note the presence of option_meta_data */
-                                /* We can predict if this extra data will be here by the type attribute used previously */
-                                option_meta_data: {
-                                    cost_options: false,
-                                },
-                                details: {
-                                    free_tier_eligble: false,
-                                    vCPUs: 2,
-                                    RAM: 8,
-                                    Network_Performance: undefined,
-                                    more_details: [{
-                                        detail: {
-                                            name: Network_Bandwidth,
-                                            amount: 12.5,
-                                        },
-                                        detail: {
-                                            name: EBS_Bandwidth,
-                                            amount: 10,
-                                        },
-                                    }, ],
-                                },
-                                costs: [{
-                                    name: "On-Demand Per-Hour",
-                                    type: "decimal",
-                                    cost: 0.096,
-                                }, ],
-                            }
-                        ],
-                    }, ],
+                    name: "On-Demand Per-Hour",
+                    type: "decimal",
+                    cost: 0.0116,
                 }, ],
             }, ],
         }]
@@ -358,21 +279,32 @@
 
                     if (solutions[checkAnswers].resources[i].costs)
                         for (j = 0; j < Object.keys(solutions[checkAnswers].resources[i].costs).length; j++) {
+                            console.log(solutions[checkAnswers].resources[i].costs[j].name)
+                            console.log(solutions[checkAnswers].resources[i].costs[j].cost.toString().length)
                             var resourceCosts = document.createElement('div');
                             resourceCosts.innerHTML =
                                 '<div class="costsPadding">' +
                                 '<ul>' +
-                                '<li class="text-white">' + solutions[checkAnswers].resources[i].costs[j].name + ': $' + solutions[checkAnswers].resources[i].costs[j].cost.toString() + '</li>' +
+                                '<li class="text-white">' + solutions[checkAnswers].resources[i].costs[j].name + ': $' + solutions[checkAnswers].resources[i].costs[j].cost + '</li>' +
                                 '</ul>' +
                                 '</div>'
 
                             document.getElementById("cardzone").appendChild(resourceCosts)
                         }
                 }
+                var recomendationsPadding = document.createElement('div');
+                recomendationsPadding.innerHTML = '<div class="recomendationsPadding">' + '</div>'
+                document.getElementById("cardzone").appendChild(recomendationsPadding)
             }
 
         } else {
-            document.getElementById('output').innerHTML = "No Solutions Found"
+            document.getElementById('cardzone').innerHTML =
+                '<div class = "divflex2">' +
+                '<h2 class ="resourceTitle">' + "No Solutions Found" + '</h2>' +
+                '</div>' +
+                '<div class ="flex-center">' +
+                '<p class="text-white noSolutionText">' + "Sorry, we were unable to find a solution that meets your requirements." + '</p>'
+            '</div>'
         }
     };
 </script>
@@ -382,14 +314,16 @@
     <h1 class="text-white surveyTitle">Recomendations</h1>
 
     <div class="divflex">
+
         <div id="cardzone" class="card container ">
-
         </div>
+
         <div>
-
-            <h2 id="output"> </h2>
-            <a href="./index.html">Return Home</a>
-
+            <div class="flex-center">
+                <form class="submit-form" action="./index.html">
+                    <input type="submit" value="Return Home" class="start-button">
+                </form>
+            </div>
         </div>
     </div>
 

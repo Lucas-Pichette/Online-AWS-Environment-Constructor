@@ -65,7 +65,7 @@
         type: "boolean",
         userAnswer: null
     }, {
-        name: "Do you need something quick and easy (True), or higher quality and worth the extra time and development effort (False)?",
+        name: "Do you need something quick and easy (Yes), or higher quality and worth the extra time and development effort (No)?",
         type: "boolean",
         userAnswer: null
     }, ]
@@ -73,7 +73,7 @@
     function generateQuestion() {
         //This logic makes it so they can not skip questions 
 
-        //TODO: fix this jank
+        //TODO: this is jank
         if (firstItrFlag == 0 && answerSelected != 0) {
             firstItrFlag = 1;
 
@@ -94,16 +94,25 @@
                     var card = document.createElement('div');
                     card.setAttribute("id", "gen");
                     card.innerHTML =
+                        '<div class ="column-end">' +
+
                         '<h2>' + questions[index].name + '</h2>' +
+
+
                         '<div class="booleanDiv">' +
+
                         '<div id = "1" class="aDiv" onClick="handleBoolean(index, true)">' +
                         '<p class = "aText">' + 'Yes' + '</p>' +
                         '</div>' +
+
                         '<div id = "2" class="aDiv" onClick="handleBoolean(index, false)">' +
                         '<p class = "aText">' + 'No' + '</p>' +
                         '</div>' +
-                        '</div>'
-                    '<BR>';
+
+                        '</div>' +
+
+                        '</div>' +
+                        '<BR>';
                     document.getElementById("cardzone").appendChild(card)
                     break;
 
