@@ -41,218 +41,40 @@
 
     <!-- Your CSS link -->
     <link rel="stylesheet" type="text/css" href="./style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="data.js"></script>
 
 </head>
 
 <script>
-    window.onload = function() {
-        //Assume all prices to be in USD 
-        /* 
-         * Prices can change depending upon origin of hardware; 
-         * e.g. if you have your environment in Canada vs United States, 
-         * it may cost a different amount. 
-         */
-        var questions = JSON.parse(sessionStorage.getItem(0));
-        console.log("qs", questions)
+    console.log("asdf", solutions);
 
-        const solutions = [{
-            name: "Serverless Website",
-            /* If even one of these isn't met, don't display the solution */
-            /* Expected answers won't include an answer for each question. Not 
-            every question will be relevant to every solution. */
-            expected_answers: [{
-                /* The index of the question in the questions array */
-                question: 1,
-                type: "boolean",
-                answer: true
-            }, {
-                /* The index of the question in the questions array */
-                question: 2,
-                type: "boolean",
-                answer: true
-            }, {
-                /* The index of the question in the questions array */
-                question: 3,
-                type: "boolean",
-                answer: true
-            }, ],
-            resources: [{
-                name: "Route53",
-                /* generic resource description */
-                description: "Domain Name Service (DNS)",
-                dependencies: [{
-                    dependency: [{
-                        resource: "Simple Storage Service (S3)"
-                    }, {
-                        reason: "While S3 itself is not a requirement, a static hosting origin (such as S3) is. To prevent friction and headache from trying to link resources from different providers, we would encourage the use of S3, as AWS allows for a convenient 'alias' record creation. You can just click on the name of the S3 bucket when creating an A record for it in Route53, for example!"
-                    }, ]
-                }],
-                /* why this resource exists in the environment/solution */
-                justification: "Allows your users to enter a domain name and be redirected to your website",
-                /* costs are quite complex with AWS, I've removed non-related costs */
-                costs: [{
-                    name: "Hosted Zone",
-                    type: "decimal",
-                    cost: "0.5",
-                }, {
-                    name: "Per-Query",
-                    type: "decimal",
-                    cost: "0.0000004",
-                }, ],
-            }, {
-                name: "Simple Storage Service (S3)",
-                /* generic resource description */
-                description: "Scalable object storage",
-                dependencies: undefined,
-                /* why this resource exists in the environment/solution */
-                justification: "Static file hosting; dynamic backends can be added to this environment if desired",
-                /* costs are quite complex with AWS, I've removed non-related costs */
-                costs: [{
-                    name: "Storage (GB)",
-                    type: "decimal",
-                    cost: "0.023",
-                }, {
-                    name: "Per PUT Request",
-                    type: "decimal",
-                    cost: "0.000005",
-                }, {
-                    name: "Per GET Request",
-                    type: "decimal",
-                    cost: "0.0000004",
-                }, ],
-            }, {
-                name: "CloudFront",
-                /* generic resource description */
-                description: "Content Distribution Network (CDN)",
-                dependencies: [{
-                    dependency: [{
-                        resource: "Certificate Manager"
-                    }, {
-                        reason: "CloudFront requries a TLS/SSL certificate in order to be created, as it transmits data via HTTPS."
-                    }, ]
-                }],
-                /* why this resource exists in the environment/solution */
-                justification: "HTTPS (Secure) web-based connection to website resources, data caching for hosting origin (S3) relief, and data caching for faster retrieval times.",
-                /* costs are quite complex with AWS, I've removed non-related costs */
-                costs: [{
-                    name: "Data Transfer: To Internet (GB)",
-                    type: "decimal",
-                    cost: "0.085",
-                }, {
-                    name: "Data Transfer: To Origin (GB)",
-                    type: "decimal",
-                    cost: "0.02",
-                }, ],
-            }, {
-                name: "Certificate Manager",
-                /* generic resource description */
-                description: "Manages TLS and SSL certificates",
-                dependencies: [{
-                    dependency: [{
-                        resource: "Route53"
-                    }, {
-                        reason: "While you may be able to use a DNS from another provider, the difficulty of such with integration to Certificate Manager is unknown. It's encouraged to use Rotue53 as your DNS for ease-of-use when using Certificate Manager."
-                    }, ]
-                }],
-                /* why this resource exists in the environment/solution */
-                justification: "Required for HTTPS-based connections.",
-                /* costs are quite complex with AWS, I've removed non-related costs */
-                // No costs associated to this service
-                costs: null
-            }, ],
-        }, {
-            name: "Standalone API",
-            /* If even one of these isn't met, don't display the solution */
-            /* Expected answers won't include an answer for each question. Not 
-            every question will be relevant to every solution. */
-            expected_answers: [{
-                /* The index of the question in the questions array */
-                question: 1,
-                type: "boolean",
-                answer: true
-            }, {
-                /* The index of the question in the questions array */
-                question: 2,
-                type: "boolean",
-                answer: false
-            }, {
-                /* The index of the question in the questions array */
-                question: 3,
-                type: "boolean",
-                answer: false
-            }, {
-                /* The index of the question in the questions array */
-                question: 4,
-                type: "boolean",
-                answer: true
-            }, ],
-            resources: [{
-                name: "Route53",
-                /* generic resource description */
-                description: "Domain Name Service (DNS)",
-                dependencies: [{
-                    dependency: [{
-                        resource: "Elastic Compute Cloud (EC2)"
-                    }, {
-                        reason: "While EC2 itself is not a requirement, a server hosting origin (such as EC2) is. To prevent friction and headache from trying to link resources from different providers, we would encourage the use of EC2, as AWS allows for a convenient 'alias' record creation. You can just click on the name of the EC2 instance when creating an A record for it in Route53, for example!"
-                    }, ]
-                }],
-                /* why this resource exists in the environment/solution */
-                justification: "Allows your users to enter a domain name and be redirected to your website; Not required if connecting to 'public ipv4' is acceptable.",
-                /* costs are quite complex with AWS, I've removed non-related costs */
-                costs: [{
-                    name: "Hosted Zone",
-                    type: "decimal",
-                    cost: 0.5,
-                }, {
-                    name: "Per-Query",
-                    type: "decimal",
-                    cost: 0.0000004,
-                }, ],
-            }, {
-                name: "Elastic Compute Cloud (EC2)",
-                /* generic resource description */
-                description: "Cloud-based Compute Service (Virtual Machine in the Cloud)",
-                dependencies: undefined,
-                /* why this resource exists in the environment/solution */
-                justification: "The hosting origin for your API, and where all of your development will occur",
-                /* costs are quite complex with AWS, I've removed non-related costs */
-                costs: [{
-                    name: "On-Demand Per-Hour",
-                    type: "decimal",
-                    cost: 0.0116,
-                }, ],
-            }, ],
-        }]
-
-        var checkAnswers = -1;
-        //check if first solution
-        if ((questions[0].userAnswer == true) && (questions[1].userAnswer == true) && (questions[2].userAnswer == true)) {
-            console.log("ans1", 0)
-            checkAnswers = 0
-        }
-
-        //check if second solution
-        if ((questions[0].userAnswer == true) && (questions[1].userAnswer == false) && (questions[2].userAnswer == false) && (questions[3].userAnswer == true)) {
-            console.log(1)
-            checkAnswers = 1
-        }
+    function renderRecomendations(checkAnswers, url) {
+        console.log(url)
 
         //if a solution was found
         if (checkAnswers != -1) {
+            var c = "cardzone"
+            console.log(c)
 
             var card = document.createElement('div');
             card.innerHTML =
                 '<div class="solutionTitle">' +
-                '<h2 style="font-size:38px;">' + solutions[checkAnswers].name + '</h2>' +
+                '<h2 class ="solutionTitleText">' + solutions[checkAnswers].name + '</h2>' +
+                "<a href='" + url + "'download>" +
+                '<button class="btn">' + '<i class="fa fa-download">' + '</i> Download</button>' +
+                '</a>' +
                 '</div>'
 
-            document.getElementById("cardzone").appendChild(card)
+            document.getElementById(c).appendChild(card)
 
             for (i = 0; i < Object.keys(solutions[checkAnswers].resources).length; i++) {
                 var resources = document.createElement('div');
                 resources.innerHTML =
+
+                    '<a class ="resourceTitle" href = ' + solutions[checkAnswers].resources[i].link + ' >' +
                     '<h2 class ="resourceTitle">' + '' + solutions[checkAnswers].resources[i].name + '</h2>' +
+                    '</a>' +
                     '<div >' +
                     '<ul>' +
                     '<li class="text-white">' + 'Description: ' + solutions[checkAnswers].resources[i].description + '</li>' +
@@ -263,7 +85,7 @@
 
                 '</div>'
 
-                document.getElementById("cardzone").appendChild(resources)
+                document.getElementById(c).appendChild(resources)
 
                 if (solutions[checkAnswers].resources[i].costs != null) {
                     var costTitle = document.createElement('div');
@@ -275,7 +97,7 @@
                         '</ul>' +
                         '</div>'
 
-                    document.getElementById("cardzone").appendChild(costTitle)
+                    document.getElementById(c).appendChild(costTitle)
 
                     if (solutions[checkAnswers].resources[i].costs)
                         for (j = 0; j < Object.keys(solutions[checkAnswers].resources[i].costs).length; j++) {
@@ -289,12 +111,12 @@
                                 '</ul>' +
                                 '</div>'
 
-                            document.getElementById("cardzone").appendChild(resourceCosts)
+                            document.getElementById(c).appendChild(resourceCosts)
                         }
                 }
                 var recomendationsPadding = document.createElement('div');
                 recomendationsPadding.innerHTML = '<div class="recomendationsPadding">' + '</div>'
-                document.getElementById("cardzone").appendChild(recomendationsPadding)
+                document.getElementById(c).appendChild(recomendationsPadding)
             }
 
         } else {
@@ -305,6 +127,28 @@
                 '<div class ="flex-center">' +
                 '<p class="text-white noSolutionText">' + "Sorry, we were unable to find a solution that meets your requirements." + '</p>'
             '</div>'
+        }
+
+    }
+
+    window.onload = function() {
+
+        var questions = JSON.parse(sessionStorage.getItem(0));
+
+        if ((questions[0].userAnswer == true) && (questions[1].userAnswer == true) && (questions[2].userAnswer == true)) {
+            //serverless website
+            renderRecomendations(0, "https://s3.amazonaws.com/awsec-artifact.org/s3website.yml")
+
+
+        } else if ((questions[0].userAnswer == true) && (questions[1].userAnswer == false) && (questions[2].userAnswer == false) && (questions[3].userAnswer == false) && (questions[4].userAnswer == true)) {
+            //chatbot
+            renderRecomendations(1, "https://s3.amazonaws.com/awsec-artifact.org/chatbot.yml")
+        } else if ((questions[0].userAnswer == true) && (questions[1].userAnswer == false) && (questions[2].userAnswer == false) && (questions[3].userAnswer == true)) {
+            //standalone api
+            renderRecomendations(2)
+        } else {
+            //no solutoin found
+            renderRecomendations(-1)
         }
     };
 </script>

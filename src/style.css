@@ -152,9 +152,16 @@
 
 .solutionTitle {
     display: flex;
+    flex-direction: column;
     justify-content: center;
-    height: 60px;
-    margin-bottom: 40px;
+    align-items: center;
+    height: 120px;
+    margin-bottom: 30px;
+}
+
+.solutionTitleText {
+    font-size: 45px;
+    margin-bottom: 20px;
 }
 
 .resourcePadding {
@@ -355,4 +362,20 @@ ul {
 .noSolutionText {
     font-family: Arial, Helvetica, sans-serif;
     font-size: larger;
+}
+
+.btn {
+    background-color: #0e0e10da;
+    border: none;
+    color: white;
+    padding: 12px 30px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+
+/* Darker background on mouse-over */
+
+.btn:hover {
+    background-color: #1c1c20da;
 }

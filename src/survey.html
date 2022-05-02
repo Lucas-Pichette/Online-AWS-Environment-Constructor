@@ -53,22 +53,29 @@
     key "id" with its current index, then you can feel free to reorder *that* 
     questions JSON array as you please. */
     const questions = [{
-        name: "Does your solution need to, or is willing to, reach users from a web-based interface?",
-        type: "boolean",
-        userAnswer: null
-    }, {
-        name: "Does your solution need to, or want to be able to, support users at a global scale?",
-        type: "boolean",
-        userAnswer: null
-    }, {
-        name: "Is a serverless approach desired?",
-        type: "boolean",
-        userAnswer: null
-    }, {
-        name: "Do you need something quick and easy (Yes), or higher quality and worth the extra time and development effort (No)?",
-        type: "boolean",
-        userAnswer: null
-    }, ]
+            name: "Does your solution need to, or is willing to, reach users from a web-based interface?",
+            type: "boolean",
+            userAnswer: null
+        }, {
+            name: "Does your solution need to, or want to be able to, support users at a global scale?",
+            type: "boolean",
+            userAnswer: null
+        }, {
+            name: "Is a serverless approach desired?",
+            type: "boolean",
+            userAnswer: null
+        }, {
+            name: "Do you need something quick and easy (Yes), or higher quality and worth the extra time and development effort (No)?",
+            type: "boolean",
+            userAnswer: null
+        }, {
+            name: "Does your service need to support instantly-answered questions via AI?",
+            type: "boolean",
+            userAnswer: null
+        },
+
+
+    ]
 
     function generateQuestion() {
         //This logic makes it so they can not skip questions 
@@ -97,7 +104,6 @@
                         '<div class ="column-end">' +
 
                         '<h2>' + questions[index].name + '</h2>' +
-
 
                         '<div class="booleanDiv">' +
 
