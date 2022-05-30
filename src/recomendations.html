@@ -47,8 +47,6 @@
 </head>
 
 <script>
-    console.log("asdf", solutions);
-
     function renderRecomendations(checkAnswers, url) {
         console.log(url)
 
@@ -138,8 +136,6 @@
         if ((questions[0].userAnswer == true) && (questions[1].userAnswer == true) && (questions[2].userAnswer == true)) {
             //serverless website
             renderRecomendations(0, "https://s3.amazonaws.com/awsec-artifact.org/s3website.yml")
-
-
         } else if ((questions[0].userAnswer == true) && (questions[1].userAnswer == false) && (questions[2].userAnswer == false) && (questions[3].userAnswer == false) && (questions[4].userAnswer == true)) {
             //chatbot
             renderRecomendations(1, "https://s3.amazonaws.com/awsec-artifact.org/chatbot.yml")
